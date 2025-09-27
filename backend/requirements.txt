@@ -1,0 +1,11 @@
+flask==3.0.3
+flask-cors==4.0.1
+python-dotenv==1.0.1
+pinecone-client==4.1.0
+openai==0.28
+pypdf==4.2.0
+google-adk==0.2.0
+google-generativeai==0.7.1
+langchain==0.2.6
+tqdm==4.66.4
+deprecated==1.2.18
