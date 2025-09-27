@@ -2,10 +2,11 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from src.app.main_agent import main_agent
 import traceback
+import os 
 
 app = Flask(__name__)
-ALLOWED_ORIGINS = ["http://localhost:5173"]
-CORS(app,origins=ALLOWED_ORIGINS)
+allowed_origins = os.environ.get("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
+CORS(app,origins=allowed_origins)
 
 
 @app.route('/chat', methods=['POST'])
