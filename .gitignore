@@ -1,2 +1,16 @@
 .env
 venv/*
+.DS_Store
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+.eggs/
+*.pyo
+*.pyd
+*.whl
+dist/
+build/
+develop-eggs/
+.installed.cfg
