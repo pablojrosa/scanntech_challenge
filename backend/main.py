@@ -5,6 +5,7 @@ from src.app.rag_tool import semantic_search_raw
 import os 
 from flask_migrate import Migrate
 from src.models import db, ChatMessage, ConversationEval
+from run_evaluations import run_offline_evaluation
 import threading
 import numpy as np
 from ragas import evaluate
@@ -17,7 +18,9 @@ from ragas.metrics import (
 
 app = Flask(__name__)
 allowed_origins = os.environ.get("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
-CORS(app,origins=allowed_origins)
+
+CORS(app, resources={r"/*": {"origins": allowed_origins}}, supports_credentials=True)
+
 
 db_url = os.environ.get('DATABASE_URL')
 if db_url.startswith("postgres://"):
@@ -49,6 +52,7 @@ def evaluate_interaction_async(app, question, answer, context, session_id, agent
             new_evaluation = ConversationEval(
                 message_id=agent_message_id,
                 session_id=session_id,
+                user_question=question,
                 faithfulness=round(result['faithfulness'][0],2),
                 answer_relevancy=round(result['answer_relevancy'][0],2)
             )
@@ -60,7 +64,7 @@ def evaluate_interaction_async(app, question, answer, context, session_id, agent
         except Exception as e:
             print(f"❌ Error en la evaluación asíncrona para {agent_message_id}: {e}")
             db.session.rollback()
-        
+
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.get_json()
@@ -112,6 +116,49 @@ def chat():
         db.session.rollback()
         print((f"❌ Error procesando mensaje: {str(e)}"))
         return jsonify({'error': f'Error procesando mensaje: {str(e)}'}), 500   
+    
+@app.route('/evaluate-offline', methods=['POST'])
+def trigger_offline_evaluation():
+    """
+    Endpoint para disparar la evaluación offline desde el frontend.
+    """
+    try:
+        evaluation_results_df = run_offline_evaluation()
+        
+        results_json = evaluation_results_df.to_dict(orient='records')
+        
+        return jsonify(results_json)
+
+    except Exception as e:
+        print(f"❌ Error durante la evaluación offline: {str(e)}")
+        return jsonify({'error': f'Error en la evaluación offline: {str(e)}'}), 500
+
+@app.route('/conversation-metrics', methods=['GET'])
+def get_conversation_metrics():
+    try:
+        query = db.session.query(ConversationEval, ChatMessage).join(
+            ChatMessage, ConversationEval.message_id == ChatMessage.message_id
+        ).order_by(ConversationEval.timestamp.desc()).limit(100) # Traemos los últimos 100
+        
+        results = query.all()
+        
+        metrics_list = []
+        for eval_result, chat_message in results:
+            metrics_list.append({
+                'message_id': eval_result.message_id,
+                'user_question': eval_result.user_question,
+                'message_text': chat_message.message,
+                'faithfulness': eval_result.faithfulness,
+                'answer_relevancy': eval_result.answer_relevancy,
+                'session_id': eval_result.session_id,
+                'timestamp': eval_result.timestamp.isoformat(),
+            })
+            
+        return jsonify(metrics_list)
+
+    except Exception as e:
+        print(f"❌ Error al obtener métricas de conversación: {str(e)}")
+        return jsonify({'error': f'Error obteniendo métricas: {str(e)}'}), 500
     
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

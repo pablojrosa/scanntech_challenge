@@ -23,6 +23,7 @@ class ConversationEval(db.Model):
 
     eval_id = db.Column(db.String, primary_key=True, default=lambda: str(uuid.uuid4()))
     message_id = db.Column(db.String, ForeignKey('chat_messages.message_id'), nullable=False, unique=True)
+    user_question = db.Column(db.Text, nullable=False)
     session_id = db.Column(db.String, nullable=False, index=True)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     faithfulness = db.Column(db.Float, nullable=True)

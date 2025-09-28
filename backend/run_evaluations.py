@@ -118,7 +118,7 @@ def run_offline_evaluation():
             if_exists='append',
             index=False
         )
-        print(f"✅ ¡Éxito! Se guardaron {len(final_df)} resultados en la tabla 'evaluation_results'.")
+        return result_df
     except Exception as e:
         print(f"❌ Error al guardar los resultados en la base de datos: {e}")
 
