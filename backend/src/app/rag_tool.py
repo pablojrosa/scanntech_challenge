@@ -45,3 +45,36 @@ def semantic_search(query: str, top_k: int = top_k) -> str:
         text = match["metadata"]["text"].replace("\n", " ")
         text_response += f"{text}\n\n"
     return text_response.strip()
+
+
+def semantic_search_raw(query: str, top_k: int = 3) -> dict:
+    """
+    Busca, recupera pasajes de texto y sus scores de confianza.
+    Utiliza esta herramienta SIEMPRE que el usuario pregunte por conceptos, definiciones, etc.
+    Devuelve un diccionario con el contexto y los scores.
+    """
+    query_vector = get_embedding(query)
+
+    results = index.query(
+        vector=query_vector,
+        top_k=top_k,
+        include_metadata=True
+    )
+
+    contexts = []
+    scores = []
+
+    if "matches" in results:
+        for match in results["matches"]:
+            text = match["metadata"]["text"].replace("\n", " ")
+            contexts.append(text)
+
+            if "score" in match:
+                scores.append(match["score"])
+
+    final_context = "\n\n".join(contexts)
+
+    return {
+        "context": final_context,
+        "scores": scores
+    }
