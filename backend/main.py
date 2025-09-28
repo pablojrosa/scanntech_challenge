@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from src.models import db, ChatMessage, ConversationEval, EvaluationResult, GoldenDataset
 import threading
 import numpy as np
-from src.evaluation_worker import run_online_evaluation
+from src.app.evaluation_worker import run_online_evaluation
 
 app = Flask(__name__)
 allowed_origins = os.environ.get("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
