@@ -1,0 +1,79 @@
+.page-container {
+  padding: 1rem 2rem;
+  color: #eee;
+}
+
+.table-container {
+  margin-top: 2rem;
+  overflow-x: auto;
+  background-color: #212121;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #ddd;
+}
+
+.results-table th, .results-table td {
+  border-bottom: 1px solid #444;
+  padding: 12px 15px;
+  text-align: left;
+  white-space: nowrap; 
+  vertical-align: top;
+}
+
+.results-table td:nth-child(1),
+.results-table td:nth-child(2)
+
+{
+  max-width: 400px; 
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.results-table td:first-child {
+    white-space: normal;
+}
+
+.results-table th {
+  background-color: #333;
+  color: #fff;
+  font-weight: bold;
+}
+
+.results-table tbody tr:nth-child(even) {
+  background-color: #2c2c2c;
+}
+
+.results-table tbody tr:hover {
+  background-color: #383838;
+}
+
+.error-message {
+  color: #ff6b6b;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}

@@ -1,5 +1,3 @@
-// src/components/ChatWindow.jsx
-
 import React, { useEffect, useRef } from 'react';
 import Message from './Message';
 import './ChatWindow.css';

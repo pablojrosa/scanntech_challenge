@@ -1,47 +1,69 @@
-# Scantech Challenge: Agente RAG con Pinecone y Gemini 🤖
+# Scanntech Challenge
+# Panel de Control RAG con Gemini y Métricas de Calidad 🚀
 
-Este proyecto se presenta en el marco del challenge para la empresa Scanntech.
-Es una un chatbot basado en **RAG** puede responder preguntas de un usuario basandose en el libro An Introduction to Statistical Learning with Applications in Python. 
-Para el agente se utilizó el modelo **gemini-2.0-flash** que ofrece Google.
-Para el proceso de RAG se utilizó el libro brindado, se vectorizó utilizando el modelo **text-embedding-3-small** que ofrece OpenAI.
-Para el almacenamiento persistente de los vectores, se utilizó **Pinecone** como proveedor.
+Este proyecto fue desarrollado en el marco de un desafío técnico propuesto por Scanntech.
+Es un sistema que principalmente esta compuesto por un chatbot basado en **RAG** (Retrieval-Augmented Generation) que responde preguntas sobre el libro "An Introduction to Statistical Learning with Applications in Python".
 
-##  Preview
+Además de ser un simple chatbot, este proyecto implementa un **Panel de Control** que permite monitorear, evaluar y mejorar la calidad del sistema RAG a través de métricas en tiempo real y evaluaciones exhaustivas bajo demanda.
 
-![Demo del Chatbot](media/example.png)
+## Preview
+
+![Panel de Control RAG](media/panel_de_control.png) 
 
 ## Índice
 
-- [Features](#features)
+- [Panel de Control RAG: Features Principales](#panel-de-control-rag-features-principales)
+- [Sistema de Evaluación Dual](#sistema-de-evaluación-dual)
 - [Stack Tecnológico](#stack-tecnológico)
 - [Estructura del Proyecto](#estructura-del-proyecto)
-- [Prerrequisitos](#prerrequisitos)
-- [Instalación y Ejecución Local](#instalación-y-ejecución-local)
-- [Variables de Entorno](#variables-de-entorno)
 - [Despliegue en Railway](#despliegue-en-railway)
 
-## Features
+## Panel de Control RAG: Features Principales
 
-- **Interfaz de Chat en Tiempo Real**: Construida con React para una experiencia de usuario fluida e instantánea.
-- **Memoria de Conversación**: El chatbot recuerda el historial del chat para mantener el contexto en las conversaciones largas.
-- **Búsqueda Semántica (RAG)**: En lugar de depender solo de su conocimiento interno, el agente utiliza una herramienta personalizada para buscar información relevante en una base de datos vectorial (Pinecone), proporcionando respuestas precisas y basadas en el contenido del libro.
-- **Componentes de UI Pulidos**: La interfaz incluye timestamps en los mensajes, manejo de estados de carga y un diseño responsivo.
+La aplicación se presenta como un panel de control con tres secciones principales, diseñadas para interactuar con el agente y analizar su rendimiento.
+
+### 1. Chat Interactivo
+Una interfaz de chat construida con React que permite a los usuarios conversar con el agente. Incluye:
+- **Memoria de Conversación**: El historial del chat se envía al agente para mantener el contexto.
+- **Búsqueda Semántica**: El agente utiliza Pinecone para buscar en el libro y basar sus respuestas en la información recuperada.
+- **Persistencia de Conversaciones**: Todos los mensajes (usuario y agente) se almacenan en una base de datos PostgreSQL.
+
+### 2. Métricas de Conversación (Métricas Online)
+Una vista de tabla que muestra las métricas de calidad de las conversaciones reales de los usuarios, calculadas en tiempo real.
+- **Evaluación Automática**: Cada respuesta del bot se evalúa en segundo plano para no afectar la experiencia del usuario.
+- **Métricas Clave**: Se miden `faithfulness` (fidelidad, para detectar alucinaciones) y `answer_relevancy` (relevancia de la respuesta).
+- **Contexto Completo**: La tabla muestra la pregunta del usuario, la respuesta del bot y sus respectivos scores, permitiendo un diagnóstico rápido de problemas.
+
+### 3. Evaluación del Sistema (Monitoreo Offline)
+Una sección dedicada a ejecutar una evaluación profunda y controlada del sistema RAG.
+- **Golden Dataset**: Utiliza un conjunto de datos curado de preguntas y respuestas "correctas" almacenado en PostgreSQL.
+- **Ejecución "Offline"**: Un botón en la interfaz dispara un script que corre todo el dataset de evaluación contra el sistema RAG.
+- **Reporte Completo**: Muestra un reporte detallado con métricas avanzadas como `context_precision`, `context_recall` y `answer_correctness`, permitiendo validar objetivamente la calidad de los componentes de retrieval y generación.
+
+## Sistema de Evaluación Dual
+
+El corazón de este proyecto es su enfoque no solo brindar una interfaz para conversar, sino en la posibilidad de evaluar las respuestas utilizando la librería **Ragas** para implementar dos bucles de evaluación complementarios:
+
+- **Métricas Online:** Proporciona una visión constante de la performance del bot producción, detectando problemas en conversaciones reales a través de métricas sin referencia.
+- **Monitoreo Offline:** Permite a los desarrolladores medir la calidad del sistema en un entorno controlado, comparar versiones de prompts y validar mejoras de forma científica antes de desplegarlas.
 
 ## Stack Tecnológico
 
 - **Frontend**:
-  - **Librería**: React
-  - **Bundler**: Vite
+  - **Librería/Framework**: React, Vite
   - **Estilos**: CSS puro
 
 - **Backend**:
   - **Framework**: Python, Flask
-  - **Servidor WSGI**: Gunicorn (para producción)
+  - **Base de Datos Relacional**: PostgreSQL
+  - **ORM y Migraciones**: SQLAlchemy, Flask-Migrate
+  - **Servidor WSGI**: Gunicorn
 
-- **IA y Base de Datos**:
-  - **Modelo de Lenguaje**: Google Gemini
+- **IA y MLOps**:
+  - **Modelo de Lenguaje**: Google Gemini (`gemini-2.0-flash`)
   - **Base de Datos Vectorial**: Pinecone
-  - **Modelo de Embeddings**: OpenAI
+  - **Modelo de Embeddings**: OpenAI (`text-embedding-3-small`)
+  - **Librería de Evaluación RAG**: Ragas
 
 - **Despliegue**:
   - **Plataforma**: Railway
@@ -52,109 +74,56 @@ El proyecto está organizado como un monorepo con dos directorios principales:
 
 ```
 /
-├── backend/       # Código del servidor Flask (API y lógica del agente)
-│   ├── data/
-│   │   ├── PDF-GenAI-Challenge.pdf     # Documento provisto por Scantech
+├── backend/                       # Código del servidor Flask
+│   ├── data/                      # Libro en .pdf
 │   ├── src/
-│   │   ├── app/
-│   │   ├── services/
-│   │   │   ├── vectorize_pdf.py     # Script para vectorizar el documento
-│   ├── main.py
-│   ├── requirements.txt
-├── frontend/       # Código de la aplicación de chat en React
-│   ├── public/
+│   │   ├── app/                   # Lógica de la aplicación, modelos y herramientas
+│   │   ├── services/              # Se encuentra alojado el vectorize_pdf.py
+│   │   ├── models.py/             # Archivo para gestionar la base de datos
+│   ├── migrations/                # Scripts de migración de la base de datos
+│   ├── app.py                     # Punto de entrada de la aplicación Flask
+│   ├── run_evaluation.py          # Script para la evaluación offline
+│   ├── create_golden_dataset.py   # Script para crear el golden dataset
+│   ├── Procfile                   # Archivo de configuración para Railway
+│   └── requirements.txt
+│
+├── frontend/                      # Código de la aplicación de React
 │   ├── src/
-│   │   ├── api/
-│   │   ├── assets/
-│   │   ├── components/     # Componentes y estilos del front
-│   │   ├── App.css
-│   │   ├── App.jsx
-│   │   ├── index.css
-│   │   ├── main.jsx
-│   ├── package.json
+│   │   ├── api/                   # Funciones para llamar al backend
+│   │   ├── components/            # Componentes, páginas y estilos
+│   │   ├── App.jsx                # Orquestador de rutas
+│   │   └── main.jsx               # Punto de entrada de la aplicación React
 │   └── ...
-├── media/    # Imagenes para el README.md
+├── media/                         # Archivos complementarios
+├── .gitignore
 └── README.md
 ```
 
-## Prerrequisitos
+## Despliegue en Railway
 
-Antes de comenzar, asegúrate de tener instalado lo siguiente:
-- [Node.js](https://nodejs.org/en/) (versión 18 o superior)
-- [Python](https://www.python.org/downloads/) (versión 3.9 o superior)
-- [Git](https://git-scm.com/)
+Este proyecto está diseñado para ser desplegado fácilmente en la plataforma **Railway**. 
+La ejecución local es compleja debido a las dependencias de servicios en la nube (Pinecone, PostgreSQL, APIs de LLMs) y no es el método recomendado.
 
-## Instalación y Ejecución Local
+### Configuración en Railway
 
-Sigue estos pasos para configurar y ejecutar el proyecto en tu máquina local.
+1.  **Crear el Proyecto**: Sube tu repositorio a GitHub y crea un nuevo proyecto en Railway a partir de él. Railway detectará automáticamente el `backend` y el `frontend`.
+2.  **Añadir Base de Datos**: Dentro del proyecto de Railway, añade un nuevo servicio de base de datos **PostgreSQL**. Railway inyectará automáticamente la variable de entorno `DATABASE_URL` en tus otros servicios.
+3.  **Configurar Variables de Entorno**: En el servicio `backend`, ve a la pestaña "Variables" y configura las siguientes claves secretas:
 
-### 1. Clonar el Repositorio
+    ```ini
+    # Clave de API de Google para el modelo Gemini
+    GOOGLE_API_KEY="tu_clave_de_google"
 
-```bash
-git clone git@github.com:pablojrosa/scanntech_challenge.git
-cd scanntech_challenge
-```
+    # Claves de API para Pinecone
+    PINECONE_API_KEY="tu_clave_de_pinecone"
 
-### 2. Configurar el Backend
+    # Clave de API para OpenAI (usado para los embeddings)
+    OPENAI_API_KEY="tu_clave_de_openai"
+    
+    # Orígenes permitidos para CORS (la URL de tu frontend desplegado)
+    ALLOWED_ORIGINS="https://tu-frontend.up.railway.app" 
+    ```
 
-```bash
-# 1. Navega a la carpeta del backend
-cd backend
+4.  **Comando de Inicio (Backend)**: Railway debería detectar el `Procfile` y usar el comando `web: flask db upgrade && gunicorn app:app`. Esto asegura que las migraciones de la base de datos se apliquen automáticamente antes de iniciar el servidor.
 
-# 2. Crea y activa un entorno virtual
-python -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
-
-# 3. Instala las dependencias de Python
-pip install -r requirements.txt
-
-# 4. Crea un archivo .env y añade tus claves (ver sección "Variables de Entorno")
-cp .env.example .env
-# Edita el archivo .env con tus claves
-```
-
-### 3. Configurar el Frontend
-
-```bash
-# 1. Desde la raíz, navega a la carpeta del frontend
-cd frontend
-
-# 2. Instala las dependencias de Node.js
-npm install
-```
-
-### 4. Ejecutar la Aplicación
-
-Debes tener dos terminales abiertas simultáneamente.
-
-- **Terminal 1 (Backend)**:
-  ```bash
-  cd backend
-  source venv/bin/activate
-  flask run --port 5001
-  ```
-  El servidor de backend estará corriendo en `http://localhost:5001`.
-
-- **Terminal 2 (Frontend)**:
-  ```bash
-  cd frontend
-  npm run dev
-  ```
-  La aplicación de React estará disponible en `http://localhost:5173` (o el puerto que indique Vite).
-
-## Variables de Entorno
-
-Para que el backend funcione, necesitas un archivo `.env` en la carpeta `backend/` con las siguientes variables. Crea una copia de `.env.example` si existe, o crea el archivo desde cero.
-
-```ini
-# Clave de API de Google para el modelo Gemini
-GOOGLE_API_KEY="tu_clave_de_google"
-
-# Claves de API para Pinecone
-PINECONE_API_KEY="tu_clave_de_pinecone"
-PINECONE_INDEX_NAME="nombre-de-tu-indice"
-
-# Claves de API para OpenAI (usado para generar los embeddings)
-OPENAI_API_KEY="tu_clave_de_openai"
-EMBEDDING_MODEL="text-embedding-3-small"
-```
+5.  **Desplegar**: Con las variables configuradas, cualquier `git push` a tu rama principal disparará un nuevo despliegue. ¡Y listo! Tu Panel de Control RAG estará en línea.
