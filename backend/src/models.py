@@ -27,8 +27,6 @@ class ConversationEval(db.Model):
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     faithfulness = db.Column(db.Float, nullable=True)
     answer_relevancy = db.Column(db.Float, nullable=True)
-    context_precision = db.Column(db.Float, nullable=True)
-    context_recall = db.Column(db.Float, nullable=True)
     chat_message = relationship(
         "ChatMessage",
         backref=backref("evaluation", uselist=False, cascade="all, delete-orphan")

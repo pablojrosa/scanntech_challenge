@@ -11,9 +11,7 @@ from ragas import evaluate
 from datasets import Dataset
 from ragas.metrics import (
     faithfulness,
-    answer_relevancy,
-    context_precision,
-    context_recall
+    answer_relevancy
 )
 
 
@@ -44,9 +42,7 @@ def evaluate_interaction_async(app, question, answer, context, session_id, agent
             result = evaluate(
                 dataset, 
                 metrics=[faithfulness,
-                         answer_relevancy,
-                         #context_precision,
-                         #context_recall
+                         answer_relevancy
                          ]
             )
             
@@ -54,9 +50,7 @@ def evaluate_interaction_async(app, question, answer, context, session_id, agent
                 message_id=agent_message_id,
                 session_id=session_id,
                 faithfulness=round(result['faithfulness'][0],2),
-                answer_relevancy=round(result['answer_relevancy'][0],2),
-                context_precision=None,
-                context_recall=None
+                answer_relevancy=round(result['answer_relevancy'][0],2)
             )
             
             db.session.add(new_evaluation)
