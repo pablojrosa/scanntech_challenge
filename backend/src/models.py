@@ -48,3 +48,21 @@ class GoldenDataset(db.Model):
 
     def __repr__(self):
         return f"<GoldenDataset Question: {self.question[:50]}>"
+    
+class EvaluationResult(db.Model):
+    __tablename__ = 'evaluation_results'
+
+    id = db.Column(db.Integer, primary_key=True)
+    
+    golden_dataset_id = db.Column(db.Integer, db.ForeignKey('golden_dataset.id'), nullable=False)
+    run_id = db.Column(db.String, nullable=False, index=True)
+    run_timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    faithfulness = db.Column(db.Float, nullable=True)
+    answer_relevancy = db.Column(db.Float, nullable=True)
+    context_precision = db.Column(db.Float, nullable=True)
+    context_recall = db.Column(db.Float, nullable=True)
+    answer_correctness = db.Column(db.Float, nullable=True)
+    golden_dataset_entry = relationship("GoldenDataset", backref="evaluation_results")
+
+    def __repr__(self):
+        return f"<EvaluationResult for run {self.run_id} on question {self.golden_dataset_id}>"
