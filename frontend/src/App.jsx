@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { sendMessageToBot } from './api/chatService';
 import ChatWindow from './components/ChatWindow';
 import InputBar from './components/InputBar';
@@ -9,6 +10,16 @@ const formatTime = (date) => {
   const minutes = String(date.getMinutes()).padStart(2, '0');
   const seconds = String(date.getSeconds()).padStart(2, '0');
   return `${hours}:${minutes}:${seconds}`;
+};
+
+const getSessionId = () => {
+  let sessionId = localStorage.getItem('chatSessionId');
+  if (!sessionId) {
+    sessionId = uuidv4();
+    localStorage.setItem('chatSessionId', sessionId);
+  }
+  
+  return sessionId;
 };
 
 
@@ -31,7 +42,8 @@ function App() {
 
     setMessages(prevMessages => [...prevMessages, userMessage]);
     setIsLoading(true);
-    const botReply = await sendMessageToBot(inputText, messages); 
+    const sessionId = getSessionId();
+    const botReply = await sendMessageToBot(inputText, messages, sessionId); 
     
     const botMessage = { 
       sender: 'bot',

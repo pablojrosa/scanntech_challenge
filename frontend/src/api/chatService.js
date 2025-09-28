@@ -9,12 +9,13 @@ function formatHistoryForBackend(messages) {
   }));
 }
 
-export const sendMessageToBot = async (inputText, currentMessages) => {
+export const sendMessageToBot = async (inputText, currentMessages, sessionId) => {
   const historyForBackend = formatHistoryForBackend(currentMessages);
 
   const payload = {
     message: inputText,
-    history_chat: historyForBackend
+    history_chat: historyForBackend,
+    session_id: sessionId
   };
 
   try {
