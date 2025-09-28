@@ -4,7 +4,7 @@ from src.app.main_agent import main_agent
 from src.app.rag_tool import semantic_search_raw
 import os 
 from flask_migrate import Migrate
-from src.models import db, ChatMessage, ConversationEval, EvaluationResult, GoldenDataset
+from src.app.models import db, ChatMessage, ConversationEval, EvaluationResult, GoldenDataset
 import threading
 import numpy as np
 from src.app.evaluation_worker import run_online_evaluation
