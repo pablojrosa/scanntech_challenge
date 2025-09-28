@@ -7,13 +7,7 @@ from flask_migrate import Migrate
 from src.models import db, ChatMessage, ConversationEval, EvaluationResult, GoldenDataset
 import threading
 import numpy as np
-from ragas import evaluate
-from datasets import Dataset
-from ragas.metrics import (
-    faithfulness,
-    answer_relevancy
-)
-
+from src.services.evaluation_worker import run_online_evaluation
 
 app = Flask(__name__)
 allowed_origins = os.environ.get("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
@@ -30,39 +24,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 migrate = Migrate(app, db)
 
-def evaluate_interaction_async(app, question, answer, context, session_id, agent_message_id):
-    with app.app_context():
-        try:
-            print(f"📊 Iniciando evaluación para el mensaje {agent_message_id}...")
-            data = {
-                "question": [question],
-                "answer": [answer],
-                "contexts": [[context]]
-            }
-            dataset = Dataset.from_dict(data)
-            
-            result = evaluate(
-                dataset, 
-                metrics=[faithfulness,
-                         answer_relevancy
-                         ]
-            )
-            
-            new_evaluation = ConversationEval(
-                message_id=agent_message_id,
-                session_id=session_id,
-                user_question=question,
-                faithfulness=round(result['faithfulness'][0],2),
-                answer_relevancy=round(result['answer_relevancy'][0],2)
-            )
-            
-            db.session.add(new_evaluation)
-            db.session.commit()
-            print(f"✅ Evaluación para {agent_message_id} guardada exitosamente.")
-
-        except Exception as e:
-            print(f"❌ Error en la evaluación asíncrona para {agent_message_id}: {e}")
-            db.session.rollback()
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -95,7 +56,7 @@ def chat():
 
         agent_message_id = agent_message.message_id
         eval_thread = threading.Thread(
-            target=evaluate_interaction_async,
+            target=run_online_evaluation,
             args=(
                 current_app._get_current_object(),
                 message,
