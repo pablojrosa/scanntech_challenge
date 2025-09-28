@@ -2,7 +2,7 @@ from datasets import Dataset
 from ragas import evaluate
 from ragas.metrics import faithfulness, answer_relevancy
 
-from ..models import db, ConversationEval
+from .models import db, ConversationEval
 
 def run_online_evaluation(app, question, answer, context, session_id, agent_message_id):
     """
