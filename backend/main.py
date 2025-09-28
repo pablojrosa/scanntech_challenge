@@ -47,7 +47,7 @@ def evaluate_interaction_async(app, question, answer, context, session_id, agent
                 dataset, 
                 metrics=[faithfulness,
                          answer_relevancy,
-                         context_precision,
+                         #context_precision,
                          #context_recall
                          ]
             )
@@ -57,7 +57,7 @@ def evaluate_interaction_async(app, question, answer, context, session_id, agent
                 session_id=session_id,
                 faithfulness=round(result['faithfulness'][0],2),
                 answer_relevancy=round(result['answer_relevancy'][0],2),
-                context_precision=round(result['context_precision'][0],2),
+                context_precision=None,
                 context_recall=None
             )
             
