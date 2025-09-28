@@ -1,16 +1,16 @@
 import os
 from pinecone import Pinecone
 from dotenv import load_dotenv
-import openai 
+from openai import OpenAI
 
 load_dotenv()
-
+top_k = 3
 PINECONE_API_KEY =os.getenv("PINECONE_API_KEY")
 PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
 pc = Pinecone(api_key=PINECONE_API_KEY)
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL")
 OPENAI_API_KEY=os.getenv("OPENAI_API_KEY")
-openai.api_key = OPENAI_API_KEY
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 if PINECONE_INDEX_NAME not in pc.list_indexes().names():
     raise ValueError(f"El índice '{PINECONE_INDEX_NAME}' no existe en Pinecone.")
@@ -19,14 +19,13 @@ index = pc.Index(PINECONE_INDEX_NAME)
 
 def get_embedding(text: str):
     """Genera embedding de una consulta."""
-    response = openai.Embedding.create(
+    response = client.embeddings.create(
         model=EMBEDDING_MODEL,
         input=text
     )
-    return response["data"][0]["embedding"]
+    return response.data[0].embedding
 
-
-def semantic_search(query: str, top_k: int = 3) -> str:
+def semantic_search(query: str, top_k: int = top_k) -> str:
     """
     Busca y recupera pasajes de texto directamente del libro "An Introduction to Statistical Learning with Applications in Python".
     Utiliza esta herramienta SIEMPRE que el usuario pregunte por conceptos, definiciones, algoritmos o ejemplos del libro.
