@@ -6,8 +6,6 @@ import os
 from flask_migrate import Migrate
 from src.models import db, ChatMessage, ConversationEval
 import threading
-import uuid
-from datetime import datetime
 import numpy as np
 from ragas import evaluate
 from datasets import Dataset

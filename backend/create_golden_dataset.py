@@ -1,8 +1,10 @@
 import psycopg2
 import os
+from dotenv import load_dotenv
 from datetime import datetime
 
-DB_URL ="postgresql://postgres:kziExmGgFAJFPzSlSwCyHMnzOYizDbOP@ballast.proxy.rlwy.net:46921/railway"
+load_dotenv()
+DB_URL = os.environ.get('DATABASE_URL')
 
 qa_pairs = [('¿Qué es el aprendizaje supervisado?', 'Es un enfoque de machine learning donde el modelo aprende a partir de datos con etiquetas conocidas para predecir una salida en nuevos datos.'),
 ('¿Qué diferencia hay entre regresión y clasificación?', 'La regresión predice valores continuos (como precio o salario), mientras que la clasificación predice categorías (como aprobar/reprobar).'),
