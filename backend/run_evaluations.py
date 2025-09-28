@@ -51,7 +51,7 @@ def run_offline_evaluation():
     print("🔌 Conectando a la base de datos...")
     engine = create_engine(db_url)
     
-    query = "SELECT id, question, ground_truth FROM golden_dataset LIMIT 2"
+    query = "SELECT id, question, ground_truth FROM golden_dataset LIMIT 5"
     df = pd.read_sql_query(query, engine)
     print(f"✅ Se cargaron {len(df)} preguntas desde la tabla golden_dataset.")
     results = []
@@ -93,6 +93,7 @@ def run_offline_evaluation():
     )
 
     result_df = result.to_pandas()
+    result_df['answer'] = rag_results_df['answer']
     result_df['golden_dataset_id'] = df['id'] 
     result_df['run_id'] = run_id
     result_df['run_timestamp'] = run_timestamp
@@ -102,6 +103,7 @@ def run_offline_evaluation():
         'golden_dataset_id': 'golden_dataset_id',
         'run_id': 'run_id',
         'run_timestamp': 'run_timestamp',
+        'answer': 'generated_answer', 
         'faithfulness': 'faithfulness',
         'answer_relevancy': 'answer_relevancy',
         'context_precision': 'context_precision',

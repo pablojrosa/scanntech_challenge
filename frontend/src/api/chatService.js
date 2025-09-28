@@ -42,15 +42,13 @@ export const sendMessageToBot = async (inputText, currentMessages, sessionId) =>
   }
 };
 
-export const runOfflineEvaluation = async () => {
+export const getOfflineEvaluationResults = async () => {
   try {
-    const response = await fetch(`${API_URL}/evaluate-offline`, {
-      method: 'POST',
-    });
-    if (!response.ok) throw new Error('Error del servidor al ejecutar la evaluación.');
+    const response = await fetch(`${API_URL}/offline-evaluation-results`);
+    if (!response.ok) throw new Error('Error del servidor.');
     return await response.json();
   } catch (error) {
-    console.error("Error al ejecutar la evaluación offline:", error);
+    console.error("Error al obtener resultados de evaluación:", error);
     throw error;
   }
 };

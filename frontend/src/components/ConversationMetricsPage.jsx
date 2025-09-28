@@ -1,4 +1,3 @@
-// src/components/ConversationMetricsPage.jsx
 import React, { useState, useEffect } from 'react';
 import { getConversationMetrics } from '../api/chatService';
 import './TableStyles.css';

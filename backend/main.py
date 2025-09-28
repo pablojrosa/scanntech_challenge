@@ -4,8 +4,7 @@ from src.app.main_agent import main_agent
 from src.app.rag_tool import semantic_search_raw
 import os 
 from flask_migrate import Migrate
-from src.models import db, ChatMessage, ConversationEval
-from run_evaluations import run_offline_evaluation
+from src.models import db, ChatMessage, ConversationEval, EvaluationResult, GoldenDataset
 import threading
 import numpy as np
 from ragas import evaluate
@@ -117,21 +116,40 @@ def chat():
         print((f"❌ Error procesando mensaje: {str(e)}"))
         return jsonify({'error': f'Error procesando mensaje: {str(e)}'}), 500   
     
-@app.route('/evaluate-offline', methods=['POST'])
-def trigger_offline_evaluation():
+@app.route('/offline-evaluation-results', methods=['GET'])
+def get_offline_evaluation_results():
     """
-    Endpoint para disparar la evaluación offline desde el frontend.
+    Endpoint para obtener los resultados de la última corrida de evaluación offline.
     """
     try:
-        evaluation_results_df = run_offline_evaluation()
+
+        latest_run = db.session.query(EvaluationResult.run_id).order_by(EvaluationResult.run_timestamp.desc()).first()
+        if not latest_run:
+            return jsonify([])
+
+        latest_run_id = latest_run[0]
+
+        query = db.session.query(EvaluationResult, GoldenDataset).join(
+            GoldenDataset, EvaluationResult.golden_dataset_id == GoldenDataset.id
+        ).filter(EvaluationResult.run_id == latest_run_id).all()
         
-        results_json = evaluation_results_df.to_dict(orient='records')
-        
-        return jsonify(results_json)
+        results_list = []
+        for eval_result, golden_entry in query:
+            results_list.append({
+                'question': golden_entry.question,
+                'generated_answer': eval_result.generated_answer,
+                'faithfulness': eval_result.faithfulness,
+                'answer_relevancy': eval_result.answer_relevancy,
+                'context_precision': eval_result.context_precision,
+                'context_recall': eval_result.context_recall,
+                'answer_correctness': eval_result.answer_correctness
+            })
+            
+        return jsonify(results_list)
 
     except Exception as e:
-        print(f"❌ Error durante la evaluación offline: {str(e)}")
-        return jsonify({'error': f'Error en la evaluación offline: {str(e)}'}), 500
+        print(f"❌ Error al obtener resultados de evaluación offline: {str(e)}")
+        return jsonify({'error': f'Error obteniendo resultados: {str(e)}'}), 500
 
 @app.route('/conversation-metrics', methods=['GET'])
 def get_conversation_metrics():

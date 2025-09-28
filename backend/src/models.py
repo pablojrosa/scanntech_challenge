@@ -54,6 +54,7 @@ class EvaluationResult(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     
     golden_dataset_id = db.Column(db.Integer, db.ForeignKey('golden_dataset.id'), nullable=False)
+    generated_answer = db.Column(db.Text, nullable=True)
     run_id = db.Column(db.String, nullable=False, index=True)
     run_timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     faithfulness = db.Column(db.Float, nullable=True)
