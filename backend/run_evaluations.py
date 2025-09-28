@@ -4,7 +4,7 @@ import uuid
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from datasets import Dataset
-from ragas import evaluate
+from ragas.evaluation import evaluate
 from ragas.metrics import (
     faithfulness,
     answer_relevancy,
