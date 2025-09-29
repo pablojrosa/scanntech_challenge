@@ -26,6 +26,19 @@ function ConversationMetricsPage() {
   return (
     <div className="page-container">
       <h2>Métricas de Conversaciones en Vivo (Últimas 100)</h2>
+      <div className="metrics-description">
+        <h4>¿Qué significa cada métrica?</h4>
+        <dl>
+          <dt><strong>Faithfulness (Fidelidad):</strong></dt>
+          <dd>
+            Mide si la respuesta generada se basa ÚNICAMENTE en el contexto proporcionado. Un score alto (cercano a 1) significa que el modelo no está "alucinando" o inventando información.
+          </dd>
+          <dt><strong>Answer Relevancy (Relevancia de la Respuesta):</strong></dt>
+          <dd>
+            Evalúa si la respuesta es pertinente y responde directamente a la pregunta del usuario. Un score bajo podría indicar que la respuesta es vaga o se va por las ramas.
+          </dd>
+        </dl>
+      </div>
       <div className="table-container">
         <table className="results-table">
           <thead>

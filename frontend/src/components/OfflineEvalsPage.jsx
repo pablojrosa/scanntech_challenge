@@ -29,6 +29,35 @@ function OfflineEvalsPage() {
       <p>
         Estos son los scores de la última evaluación ejecutada con <code>python run_evaluations.py</code>.
       </p>
+      <div className="metrics-description">
+        <h4>¿Qué significa cada métrica?</h4>
+        <dl>
+          <dt><strong>Faithfulness (Fidelidad):</strong></dt>
+          <dd>
+            Mide si la respuesta generada se basa ÚNICAMENTE en el contexto proporcionado. Un score alto (cercano a 1) significa que el modelo no está "alucinando" o inventando información.
+          </dd>
+
+          <dt><strong>Answer Relevancy (Relevancia de la Respuesta):</strong></dt>
+          <dd>
+            Evalúa si la respuesta es pertinente y responde directamente a la pregunta del usuario. Un score bajo podría indicar que la respuesta es vaga o se va por las ramas.
+          </dd>
+
+          <dt><strong>Context Precision (Precisión del Contexto):</strong></dt>
+          <dd>
+            Se enfoca en el paso de "Retrieval". Mide qué tan relevante es el contexto que se recuperó para responder la pregunta. Un score alto indica que no se trajo "ruido" o información inútil.
+          </dd>
+
+          <dt><strong>Context Recall (Exhaustividad del Contexto):</strong></dt>
+          <dd>
+            También evalúa el "Retrieval". Mide si se recuperó TODA la información necesaria del texto original para responder completamente la pregunta. Un score bajo sugiere que se omitieron partes importantes.
+          </dd>
+
+          <dt><strong>Answer Correctness (Corrección de la Respuesta):</strong></dt>
+          <dd>
+            Compara la respuesta generada con una respuesta "perfecta" (Ground Truth). Mide la exactitud y completitud de la respuesta. Es la métrica de calidad más completa, pero requiere un dataset de evaluación.
+          </dd>
+        </dl>
+      </div>
       
       {results.length > 0 ? (
         <div className="table-container">
