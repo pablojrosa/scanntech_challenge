@@ -1,54 +1,46 @@
-/* src/components/Header.css (Versión Profesional) */
-
-/* Contenedor principal del Header */
 .app-header {
-  display: flex; /* ¡La clave! Activa Flexbox */
-  justify-content: space-between; /* Empuja los dos grupos a los extremos */
-  align-items: center; /* Los alinea verticalmente al centro */
+  display: flex; 
+  justify-content: space-between;
+  align-items: center; 
   
-  padding: 1rem 2.5rem; /* Más espaciado para que respire */
-  background-color: #1f2227; /* Un fondo oscuro y sobrio */
-  border-bottom: 1px solid #3a3f4b; /* Un borde sutil para separarlo del contenido */
+  padding: 1rem 2.5rem; 
+  background-color: #1f2227;
+  border-bottom: 1px solid #3a3f4b; 
   color: white;
-  flex-shrink: 0; /* Evita que el header se encoja */
+  flex-shrink: 0; 
 }
 
-/* Contenedor del título y subtítulo */
 .header-branding {
   display: flex;
-  flex-direction: column; /* Apila el título sobre el subtítulo */
+  flex-direction: column; 
 }
 
-/* Estilo del Título Principal */
 .header-branding h1 {
-  margin: 0; /* Quita los márgenes por defecto */
-  font-size: 1.5rem; /* Más grande y jerárquico */
+  margin: 0; 
+  font-size: 1.5rem;
   font-weight: 600;
   line-height: 1.2;
 }
 
-/* Estilo del Subtítulo */
 .header-branding h2 {
   margin: 0;
-  font-size: 0.9rem; /* Más pequeño */
+  font-size: 0.9rem; 
   font-weight: 400;
-  color: #a0a7b3; /* Un gris sutil para que sea secundario */
+  color: #a0a7b3;
 }
 
-/* Contenedor de la Navegación */
 .header-nav {
-  display: flex; /* Alinea los links horizontalmente */
-  gap: 1.5rem; /* Espacio uniforme entre cada link */
+  display: flex; 
+  gap: 1.5rem; 
 }
 
-/* Estilo de cada Link de Navegación */
 .nav-link {
-  color: #c1c8d4; /* Un color de texto claro pero no blanco puro */
+  color: #c1c8d4; 
   text-decoration: none;
   font-size: 1rem;
   font-weight: 500;
-  padding: 0.5rem 1rem; /* Espaciado interno para que sea más fácil hacer clic */
-  border-radius: 6px; /* Bordes redondeados sutiles */
+  padding: 0.5rem 1rem; 
+  border-radius: 6px;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out; 
 }
 

@@ -49,9 +49,9 @@ def semantic_search(query: str, top_k: int = top_k) -> str:
 
 def semantic_search_raw(query: str, top_k: int = 3) -> dict:
     """
-    Busca, recupera pasajes de texto y sus scores de confianza.
-    Utiliza esta herramienta SIEMPRE que el usuario pregunte por conceptos, definiciones, etc.
-    Devuelve un diccionario con el contexto y los scores.
+    Funcion que hace exactamente lo mismo que semantic_search.
+    La unica diferencia es el output.
+    Se utiliza para generar las métricas.
     """
     query_vector = get_embedding(query)
 

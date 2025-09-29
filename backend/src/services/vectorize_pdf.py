@@ -6,8 +6,7 @@ import openai
 from tqdm import tqdm
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import time
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning, module="pypdf")
+from pathlib import Path
 
 
 load_dotenv()
@@ -103,9 +102,12 @@ def index_pdf_to_pinecone(pdf_path: str):
 
 
 if __name__ == "__main__":
-    pdf_file_path = "/Users/pablorosa/Documents/pablo/challenge_scanntech/backend/data/PDF-GenAI-Challenge.pdf"
+    script_path = Path(__file__).resolve()
+    backend_root = script_path.parent.parent.parent
+    pdf_file_path = backend_root / "data" / "PDF-GenAI-Challenge.pdf"
 
     if not os.path.exists(pdf_file_path):
-        print(f"Error: El archivo {pdf_file_path} no fue encontrado.")
+        print(f"❌ Error: El archivo {pdf_file_path} no fue encontrado.")
     else:
+        print("✅ Archivo PDF encontrado. Iniciando la vectorización...")
         index_pdf_to_pinecone(pdf_file_path)
