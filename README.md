@@ -1,8 +1,7 @@
 # Scanntech Challenge
 # Panel de Control RAG con Gemini y Métricas de Calidad 🚀
 
-Este proyecto fue desarrollado en el marco de un desafío técnico propuesto por Scanntech.
-Es un sistema que principalmente esta compuesto por un chatbot basado en **RAG** (Retrieval-Augmented Generation) que responde preguntas sobre el libro "An Introduction to Statistical Learning with Applications in Python".
+Este proyecto fue desarrollado en el marco de un desafío técnico propuesto por Scanntech. Es un sistema que principalmente está compuesto por un chatbot basado en **RAG** (Retrieval-Augmented Generation) que responde preguntas sobre el libro "An Introduction to Statistical Learning with Applications in Python".
 
 Además de ser un simple chatbot, este proyecto implementa un **Panel de Control** que permite monitorear, evaluar y mejorar la calidad del sistema RAG a través de métricas en tiempo real y evaluaciones exhaustivas bajo demanda.
 
@@ -16,7 +15,7 @@ Además de ser un simple chatbot, este proyecto implementa un **Panel de Control
 - [Sistema de Evaluación Dual](#sistema-de-evaluación-dual)
 - [Stack Tecnológico](#stack-tecnológico)
 - [Estructura del Proyecto](#estructura-del-proyecto)
-- [Despliegue en Railway](#despliegue-en-railway)
+- [Despliegue en Railway con Docker](#despliegue-en-railway-con-docker)
 
 ## Panel de Control RAG: Features Principales
 
@@ -37,14 +36,14 @@ Una vista de tabla que muestra las métricas de calidad de las conversaciones re
 ### 3. Evaluación del Sistema (Monitoreo Offline)
 Una sección dedicada a ejecutar una evaluación profunda y controlada del sistema RAG.
 - **Golden Dataset**: Utiliza un conjunto de datos curado de preguntas y respuestas "correctas" almacenado en PostgreSQL.
-- **Ejecución "Offline"**: Un botón en la interfaz dispara un script que corre todo el dataset de evaluación contra el sistema RAG.
+- **Ejecución "Offline"**: Una interfaz donde se  un script que corre todo el dataset de evaluación contra el sistema RAG.
 - **Reporte Completo**: Muestra un reporte detallado con métricas avanzadas como `context_precision`, `context_recall` y `answer_correctness`, permitiendo validar objetivamente la calidad de los componentes de retrieval y generación.
 
 ## Sistema de Evaluación Dual
 
-El corazón de este proyecto es su enfoque no solo brindar una interfaz para conversar, sino en la posibilidad de evaluar las respuestas utilizando la librería **Ragas** para implementar dos bucles de evaluación complementarios:
+El corazón de este proyecto es su enfoque no solo en brindar una interfaz para conversar, sino en la posibilidad de evaluar las respuestas utilizando la librería **Ragas** para implementar dos bucles de evaluación complementarios:
 
-- **Métricas Online:** Proporciona una visión constante de la performance del bot producción, detectando problemas en conversaciones reales a través de métricas sin referencia.
+- **Métricas Online:** Proporciona una visión constante de la performance del bot en producción, detectando problemas en conversaciones reales a través de métricas sin referencia.
 - **Monitoreo Offline:** Permite a los desarrolladores medir la calidad del sistema en un entorno controlado, comparar versiones de prompts y validar mejoras de forma científica antes de desplegarlas.
 
 ## Stack Tecnológico
@@ -59,7 +58,7 @@ El corazón de este proyecto es su enfoque no solo brindar una interfaz para con
   - **ORM y Migraciones**: SQLAlchemy, Flask-Migrate
   - **Servidor WSGI**: Gunicorn
 
-- **IA y MLOps**:
+- **IA**:
   - **Modelo de Lenguaje**: Google Gemini (`gemini-2.0-flash`)
   - **Base de Datos Vectorial**: Pinecone
   - **Modelo de Embeddings**: OpenAI (`text-embedding-3-small`)
@@ -67,6 +66,7 @@ El corazón de este proyecto es su enfoque no solo brindar una interfaz para con
 
 - **Despliegue**:
   - **Plataforma**: Railway
+  - **Contenerización**: **Docker**
 
 ## Estructura del Proyecto
 
@@ -78,13 +78,13 @@ El proyecto está organizado como un monorepo con dos directorios principales:
 │   ├── data/                      # Libro en .pdf
 │   ├── src/
 │   │   ├── app/                   # Lógica de la aplicación, modelos y herramientas
-│   │   ├── services/              # Se encuentra alojado el vectorize_pdf.py
-│   │   ├── models.py/             # Archivo para gestionar la base de datos
+│   │   └── services/              # Se encuentra alojado el vectorize_pdf.py
 │   ├── migrations/                # Scripts de migración de la base de datos
-│   ├── app.py                     # Punto de entrada de la aplicación Flask
-│   ├── run_evaluation.py          # Script para la evaluación offline
+│   ├── Dockerfile                 # Define el entorno de producción con Docker
+│   ├── .dockerignore              # Excluye archivos innecesarios de la imagen Docker
+│   ├── main.py                    # Punto de entrada de la aplicación Flask
+│   ├── run_evaluations.py         # Script para la evaluación offline
 │   ├── create_golden_dataset.py   # Script para crear el golden dataset
-│   ├── Procfile                   # Archivo de configuración para Railway
 │   └── requirements.txt
 │
 ├── frontend/                      # Código de la aplicación de React
@@ -99,14 +99,13 @@ El proyecto está organizado como un monorepo con dos directorios principales:
 └── README.md
 ```
 
-## Despliegue en Railway
+## Despliegue en Railway con Docker
 
-Este proyecto está diseñado para ser desplegado fácilmente en la plataforma **Railway**. 
-La ejecución local es compleja debido a las dependencias de servicios en la nube (Pinecone, PostgreSQL, APIs de LLMs) y no es el método recomendado.
+Este proyecto está diseñado para ser desplegado de forma robusta y consistente en la plataforma **Railway** utilizando **Docker**. La contenerización asegura que el entorno de ejecución sea idéntico sin importar dónde se despliegue, eliminando problemas de dependencias de sistema (como la necesidad de `git` para la librería `ragas`).
 
 ### Configuración en Railway
 
-1.  **Crear el Proyecto**: Sube tu repositorio a GitHub y crea un nuevo proyecto en Railway a partir de él. Railway detectará automáticamente el `backend` y el `frontend`.
+1.  **Crear el Proyecto**: Sube tu repositorio a GitHub y crea un nuevo proyecto en Railway a partir de él.
 2.  **Añadir Base de Datos**: Dentro del proyecto de Railway, añade un nuevo servicio de base de datos **PostgreSQL**. Railway inyectará automáticamente la variable de entorno `DATABASE_URL` en tus otros servicios.
 3.  **Configurar Variables de Entorno**: En el servicio `backend`, ve a la pestaña "Variables" y configura las siguientes claves secretas:
 
@@ -124,6 +123,6 @@ La ejecución local es compleja debido a las dependencias de servicios en la nub
     ALLOWED_ORIGINS="https://tu-frontend.up.railway.app" 
     ```
 
-4.  **Comando de Inicio (Backend)**: Railway debería detectar el `Procfile` y usar el comando `web: flask db upgrade && gunicorn app:app`. Esto asegura que las migraciones de la base de datos se apliquen automáticamente antes de iniciar el servidor.
+4.  **Configurar Directorio Raíz (¡Importante!)**: Como este es un monorepo, debes indicarle a Railway dónde encontrar el backend. En los `Settings` del servicio `backend`, en la sección `Build`, establece el **Root Directory** en `backend/`.
 
-5.  **Desplegar**: Con las variables configuradas, cualquier `git push` a tu rama principal disparará un nuevo despliegue. ¡Y listo! Tu Panel de Control RAG estará en línea.
+5.  **Desplegar**: ¡Y listo! Con las variables y el directorio raíz configurados, cualquier `git push` a tu rama principal disparará un nuevo despliegue. Railway detectará automáticamente el `Dockerfile` dentro de `backend/`, construirá la imagen, y la pondrá en línea. El comando `CMD` dentro del `Dockerfile` se encarga de aplicar las migraciones (`flask db upgrade`) y luego iniciar el servidor (`gunicorn main:app`).
